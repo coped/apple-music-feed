@@ -1,4 +1,6 @@
 <resources>
-    <string name="app_name">AppleMusicFeed</string>
-    <string name="action_settings">Settings</string>
+    <string name="app_name">Apple Music Feed</string>
+    <string name="top_25">Top 25 Albums</string>
+    <string name="top_50">Top 50 Albums</string>
+    <string name="top_100">Top 100 Albums</string>
 </resources>
