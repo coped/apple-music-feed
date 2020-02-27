@@ -6,20 +6,23 @@ import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 
 import kotlinx.android.synthetic.main.activity_main.*
 import okhttp3.*
-import org.json.JSONArray
 import org.json.JSONObject
 
 class MainActivity : AppCompatActivity() {
-    private var albumList: MutableList<Map<String, String>> = mutableListOf()
+    private var mAlbumList: MutableList<Map<String, String>> = mutableListOf()
 
-    private fun urlForTop(n: Int): String {
-        return "https://rss.itunes.apple.com/api/v1/us/apple-music/coming-soon/all/$n/explicit.json"
-    }
+    private lateinit var mRecyclerView: RecyclerView
+    private lateinit var mAdapter: AlbumListAdapter
 
-    private fun getAlbums(url: String): String {
+    private fun topAlbumsUrl(n: Int): String =
+        "https://rss.itunes.apple.com/api/v1/us/apple-music/top-albums/all/$n/non-explicit.json"
+
+    private fun sendRequest(url: String): String {
         val client = OkHttpClient()
         val request: Request = Request.Builder()
             .url(url)
@@ -28,33 +31,51 @@ class MainActivity : AppCompatActivity() {
         return response.body!!.string()
     }
 
+    private fun parseAlbumsFromResponse(result: String): MutableList<Map<String, String>> {
+        var list: MutableList<Map<String, String>> = mutableListOf()
+
+        val jsonAlbums = JSONObject(result)
+            .getJSONObject("feed")
+            .getJSONArray("results")
+
+        for (i in (0 until jsonAlbums.length())) {
+            val a = jsonAlbums.getJSONObject(i)
+
+            val genreList: MutableList<String> = mutableListOf()
+            for (i in (0 until a.getJSONArray("genres").length())) {
+                genreList.add(i, a
+                    .getJSONArray("genres")
+                    .getJSONObject(i)
+                    .getString("name")
+                )
+            }
+
+            val albumInfo: Map<String, String> = mapOf(
+                "artistName"  to a.getString("artistName"),
+                "id"          to a.getString("id"),
+                "releaseDate" to a.getString("releaseDate"),
+                "name"        to a.getString("name"),
+                "copyright"   to a.getString("copyright"),
+                "artworkUrl"  to a.getString("artworkUrl100"),
+                "genres"      to genreList.joinToString(", ")
+            )
+            list.add(albumInfo)
+        }
+        return list
+    }
+
     // Retrieve album data from RSS Feed Generator API and parse JSON to map
     inner class HTTPAsyncTask : AsyncTask<String, Void, String>() {
         override fun doInBackground(vararg urls: String): String {
-            return getAlbums(urls[0])
+            return sendRequest(urls[0])
         }
         override fun onPostExecute(result: String) {
-            val jsonAlbums = JSONObject(result)
-                .getJSONObject("feed")
-                .getJSONArray("results")
-            for (i in (0 until jsonAlbums.length())) {
-                val a = jsonAlbums.getJSONObject(i)
-                val genreList = a.getJSONArray("genres")
-                var genres: MutableList<String> = mutableListOf()
-                for (i in (0 until genreList.length())) {
-                    genres.add(i, genreList.getJSONObject(i).getString("name"))
-                }
-                val album: Map<String, String> = mapOf(
-                    "artistName"  to a.getString("artistName"),
-                    "id"          to a.getString("id"),
-                    "releaseDate" to a.getString("releaseDate"),
-                    "name"        to a.getString("name"),
-                    "copyright"   to a.getString("copyright"),
-                    "artworkUrl"  to a.getString("artworkUrl100"),
-                    "genres"      to genres.joinToString(", ")
-                )
-                albumList.add(album)
-            }
+            mAlbumList = parseAlbumsFromResponse(result)
+
+            mRecyclerView = findViewById(R.id.recyclerview)
+            mAdapter = AlbumListAdapter(this@MainActivity, mAlbumList)
+            mRecyclerView.adapter = mAdapter
+            mRecyclerView.layoutManager = GridLayoutManager(this@MainActivity, 2)
         }
     }
 
@@ -62,7 +83,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar)
-        HTTPAsyncTask().execute(urlForTop(n = 25))
+        HTTPAsyncTask().execute(topAlbumsUrl(n = 25))
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -75,7 +96,6 @@ class MainActivity : AppCompatActivity() {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
-        Log.d("menu-item-dialog", "I've been clicked!")
         return when (item.itemId) {
             R.id.top_25 -> true
             else -> super.onOptionsItemSelected(item)
