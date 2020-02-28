@@ -5,4 +5,5 @@
     <string name="top_100">Top 100 Albums</string>
     <string name="album_by">Album by %1$s • %2$s</string>
     <string name="album_genre">Genres: %1$s</string>
+    <string name="error_message">An error occurred. Please try again.</string>
 </resources>

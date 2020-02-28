@@ -6,7 +6,7 @@ import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
-import android.view.View
+import android.widget.TextView
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 
@@ -23,13 +23,18 @@ class MainActivity : AppCompatActivity() {
     private fun topAlbumsUrl(n: Int): String =
         "https://rss.itunes.apple.com/api/v1/us/apple-music/top-albums/all/$n/non-explicit.json"
 
-    private fun sendRequest(url: String): String {
-        val client = OkHttpClient()
-        val request: Request = Request.Builder()
-            .url(url)
-            .build()
-        val response: Response = client.newCall(request).execute()
-        return response.body!!.string()
+    private fun sendRequest(url: String): String? {
+        try {
+            val client = OkHttpClient()
+            val request: Request = Request.Builder()
+                .url(url)
+                .build()
+            val response: Response = client.newCall(request).execute()
+            return response.body!!.string()
+        } catch(e: Throwable) {
+            Log.d("sendRequest_thrown", e.toString())
+            return null
+        }
     }
 
     private fun parseAlbumsFromResponse(result: String): MutableList<Map<String, String>> {
@@ -67,21 +72,23 @@ class MainActivity : AppCompatActivity() {
 
     // Retrieve album data from RSS Feed Generator API and parse JSON to map
     inner class HTTPAsyncTask : AsyncTask<String, Void, String>() {
-        override fun doInBackground(vararg urls: String): String {
+        override fun doInBackground(vararg urls: String): String? {
             return sendRequest(urls[0])
         }
-        override fun onPostExecute(result: String) {
-            mAlbumList = parseAlbumsFromResponse(result)
+        override fun onPostExecute(result: String?) {
+            if (result != null) {
+                mAlbumList = parseAlbumsFromResponse(result)
 
-            mRecyclerView = findViewById(R.id.recyclerview)
-            mAdapter = AlbumListAdapter(this@MainActivity, mAlbumList)
-            mRecyclerView.adapter = mAdapter
-            mRecyclerView.layoutManager = GridLayoutManager(this@MainActivity, 2)
+                mRecyclerView = findViewById(R.id.recyclerview)
+                mAdapter = AlbumListAdapter(this@MainActivity, mAlbumList)
+                mRecyclerView.adapter = mAdapter
+                mRecyclerView.layoutManager = GridLayoutManager(this@MainActivity, 2)
+            } else {
+                findViewById<TextView>(R.id.error_message).apply {
+                    text = resources.getText(R.string.error_message)
+                }
+            }
         }
-    }
-
-    fun viewAlbum(view: View) {
-        Log.d("album", "${view.id}")
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

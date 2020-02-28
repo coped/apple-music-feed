@@ -24,6 +24,7 @@ class DisplayAlbumActivity : AppCompatActivity() {
             Picasso
                 .get()
                 .load(album["artworkUrl"])
+                .error(R.drawable.ic_album_artwork_error_foreground)
                 .resize(1000, 1000)
                 .into(this)
         }

@@ -39,6 +39,7 @@ class AlbumListAdapter(context: Context, albumList: MutableList<Map<String, Stri
         Picasso
             .get()
             .load(mCurrent["artworkUrl"])
+            .error(R.drawable.ic_album_artwork_error_foreground)
             .resize(500, 500)
             .into(holder.albumImageView)
 
