@@ -1,6 +1,7 @@
 package com.example.applemusicfeed
 
 import android.content.Context
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,10 +17,10 @@ class AlbumListAdapter(context: Context, albumList: MutableList<Map<String, Stri
     private val mInflater: LayoutInflater = LayoutInflater.from(context)
 
     inner class AlbumViewHolder(itemView: View, adapter: AlbumListAdapter) :
-                                                RecyclerView.ViewHolder(itemView) {
+                                            RecyclerView.ViewHolder(itemView) {
 
-        val albumItemView: TextView = itemView.findViewById(R.id.album)
-        val albumImageView: ImageView = itemView.findViewById(R.id.album_image)
+        val albumTextView: TextView = itemView.findViewById(R.id.grid_album_name)
+        val albumImageView: ImageView = itemView.findViewById(R.id.grid_album_artwork)
         val mAdapter: AlbumListAdapter = adapter
     }
 
@@ -34,12 +35,26 @@ class AlbumListAdapter(context: Context, albumList: MutableList<Map<String, Stri
 
     override fun onBindViewHolder(holder: AlbumViewHolder, position: Int) {
         val mCurrent: Map<String, String> = mAlbumList[position]
-        holder.albumItemView.text = mCurrent["name"]
+        holder.albumTextView.text = mCurrent["name"]
         Picasso
             .get()
             .load(mCurrent["artworkUrl"])
             .resize(500, 500)
             .into(holder.albumImageView)
+
+
+        holder.albumImageView.setOnClickListener {
+            val context = holder.albumImageView.context
+            val intent = Intent(context, DisplayAlbumActivity::class.java).apply {
+                putExtra("artistName", mCurrent["artistName"])
+                putExtra("name", mCurrent["name"])
+                putExtra("artworkUrl", mCurrent["artworkUrl"])
+                putExtra("genres", mCurrent["genres"])
+                putExtra("releaseDate", mCurrent["releaseDate"])
+                putExtra("copyright", mCurrent["copyright"])
+            }
+            context.startActivity(intent)
+        }
     }
 
 }

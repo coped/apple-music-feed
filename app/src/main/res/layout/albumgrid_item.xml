@@ -6,11 +6,12 @@
     android:padding="10dp" >
 
     <ImageView
-        android:id="@+id/album_image"
+        android:id="@+id/grid_album_artwork"
+        android:onClick="viewAlbum"
         style="@style/album_grid_image" />
 
     <TextView
-        android:id="@+id/album"
+        android:id="@+id/grid_album_name"
         style="@style/album_grid_title" />
 
 </LinearLayout>

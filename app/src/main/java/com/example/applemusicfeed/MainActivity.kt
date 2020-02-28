@@ -6,6 +6,7 @@ import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 
@@ -77,6 +78,10 @@ class MainActivity : AppCompatActivity() {
             mRecyclerView.adapter = mAdapter
             mRecyclerView.layoutManager = GridLayoutManager(this@MainActivity, 2)
         }
+    }
+
+    fun viewAlbum(view: View) {
+        Log.d("album", "${view.id}")
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

@@ -3,4 +3,6 @@
     <string name="top_25">Top 25 Albums</string>
     <string name="top_50">Top 50 Albums</string>
     <string name="top_100">Top 100 Albums</string>
+    <string name="album_by">Album by %1$s • %2$s</string>
+    <string name="album_genre">Genres: %1$s</string>
 </resources>
