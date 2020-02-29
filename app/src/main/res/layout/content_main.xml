@@ -9,14 +9,8 @@
     tools:showIn="@layout/activity_main">
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerview"
+        android:id="@+id/recycler_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
-
-    <TextView
-        android:id="@+id/error_message"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -14,7 +14,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:padding="10dp"/>
+            android:padding="10dp"
+            android:contentDescription="@string/album_artwork_description"/>
         <TextView
             android:id="@+id/display_album_name"
             android:layout_width="match_parent"
@@ -25,7 +26,7 @@
             android:padding="10dp" />
 
         <TextView
-            android:id="@+id/display_album_artist_name"
+            android:id="@+id/display_album_by"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_horizontal"

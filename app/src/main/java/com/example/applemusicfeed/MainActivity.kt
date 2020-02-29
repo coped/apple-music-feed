@@ -6,35 +6,21 @@ import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
-import android.widget.TextView
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.snackbar.Snackbar
 
 import kotlinx.android.synthetic.main.activity_main.*
 import okhttp3.*
 import org.json.JSONObject
+import java.lang.ref.WeakReference
 
 class MainActivity : AppCompatActivity() {
     private var mAlbumList: MutableList<Map<String, String>> = mutableListOf()
 
-    private lateinit var mRecyclerView: RecyclerView
-    private lateinit var mAdapter: AlbumListAdapter
-
-    private fun topAlbumsUrl(n: Int): String =
-        "https://rss.itunes.apple.com/api/v1/us/apple-music/top-albums/all/$n/non-explicit.json"
-
-    private fun sendRequest(url: String): String? {
-        try {
-            val client = OkHttpClient()
-            val request: Request = Request.Builder()
-                .url(url)
-                .build()
-            val response: Response = client.newCall(request).execute()
-            return response.body!!.string()
-        } catch(e: Throwable) {
-            Log.d("sendRequest_thrown", e.toString())
-            return null
-        }
+    private fun topAlbumsUrl(explicit: Boolean): String {
+        val explicitness: String = if (explicit) "explicit" else "non-explicit"
+        return "https://rss.itunes.apple.com/api/v1/us/apple-music/top-albums/all/25/$explicitness.json"
     }
 
     private fun parseAlbumsFromResponse(result: String): MutableList<Map<String, String>> {
@@ -70,23 +56,48 @@ class MainActivity : AppCompatActivity() {
         return list
     }
 
-    // Retrieve album data from RSS Feed Generator API and parse JSON to map
-    inner class HTTPAsyncTask : AsyncTask<String, Void, String>() {
-        override fun doInBackground(vararg urls: String): String? {
-            return sendRequest(urls[0])
-        }
-        override fun onPostExecute(result: String?) {
-            if (result != null) {
-                mAlbumList = parseAlbumsFromResponse(result)
+    private fun sendRequest(url: String): String {
+        val client = OkHttpClient()
+        val request: Request = Request.Builder()
+            .url(url)
+            .build()
+        val response: Response = client.newCall(request).execute()
+        return response.body!!.string()
+    }
 
-                mRecyclerView = findViewById(R.id.recyclerview)
-                mAdapter = AlbumListAdapter(this@MainActivity, mAlbumList)
-                mRecyclerView.adapter = mAdapter
-                mRecyclerView.layoutManager = GridLayoutManager(this@MainActivity, 2)
-            } else {
-                findViewById<TextView>(R.id.error_message).apply {
-                    text = resources.getText(R.string.error_message)
+
+    // Asynchronously retrieve album data
+    private inner class GetAlbums : AsyncTask<String, Void, String>() {
+        private val recyclerView = findViewById<RecyclerView>(R.id.recycler_view)
+
+        override fun onPreExecute() {
+            Snackbar
+                .make(recyclerView, R.string.loading_message, Snackbar.LENGTH_SHORT)
+                .show()
+        }
+
+        override fun doInBackground(vararg urls: String): String? {
+            // Catch exceptions when fetching and parsing album data
+            return try {
+                mAlbumList = parseAlbumsFromResponse(sendRequest(urls[0]))
+                "success"
+            } catch(e: Throwable) {
+                Log.d("doInBackground_thrown", e.toString())
+                null
+            }
+        }
+
+        override fun onPostExecute(result: String?) {
+            // Display albums or show error message based on result
+            if (result != null) {
+                recyclerView.apply {
+                    adapter = AlbumListAdapter(context, mAlbumList)
+                    layoutManager = GridLayoutManager(context, 2)
                 }
+            } else {
+                Snackbar
+                    .make(recyclerView, R.string.error_message, Snackbar.LENGTH_LONG)
+                    .show()
             }
         }
     }
@@ -95,7 +106,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar)
-        HTTPAsyncTask().execute(topAlbumsUrl(n = 25))
+        GetAlbums().execute(topAlbumsUrl(explicit = false))
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -109,7 +120,14 @@ class MainActivity : AppCompatActivity() {
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         return when (item.itemId) {
-            R.id.top_25 -> true
+            R.id.non_explicit -> {
+                GetAlbums().execute(topAlbumsUrl(explicit = false))
+                return true
+            }
+            R.id.explicit -> {
+                GetAlbums().execute(topAlbumsUrl(explicit = true))
+                return true
+            }
             else -> super.onOptionsItemSelected(item)
         }
     }

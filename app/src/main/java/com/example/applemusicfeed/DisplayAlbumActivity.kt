@@ -28,17 +28,17 @@ class DisplayAlbumActivity : AppCompatActivity() {
                 .resize(1000, 1000)
                 .into(this)
         }
-        findViewById<TextView>(R.id.display_album_name).apply {
-            text = album["name"]
-        }
-        findViewById<TextView>(R.id.display_album_artist_name).apply {
-            text = resources.getString(R.string.album_by, album["artistName"], album["releaseDate"])
-        }
-        findViewById<TextView>(R.id.display_album_genres).apply {
-            text = resources.getString(R.string.album_genre, album["genres"])
-        }
-        findViewById<TextView>(R.id.display_album_copyright).apply {
-            text = album["copyright"]
-        }
+
+        val name = findViewById<TextView>(R.id.display_album_name)
+        name.text = album["name"]
+
+        val albumBy = findViewById<TextView>(R.id.display_album_by)
+        albumBy.text = resources.getString(R.string.album_by, album["artistName"], album["releaseDate"])
+
+        val genres = findViewById<TextView>(R.id.display_album_genres)
+        genres.text = resources.getString(R.string.album_genres, album["genres"])
+
+        val copyright = findViewById<TextView>(R.id.display_album_copyright)
+        copyright.text = album["copyright"]
     }
 }
