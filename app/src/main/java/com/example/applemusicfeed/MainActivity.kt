@@ -13,7 +13,6 @@ import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_main.*
 import okhttp3.*
 import org.json.JSONObject
-import java.lang.ref.WeakReference
 
 class MainActivity : AppCompatActivity() {
     private var mAlbumList: MutableList<Map<String, String>> = mutableListOf()

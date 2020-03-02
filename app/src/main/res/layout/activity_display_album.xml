@@ -15,7 +15,8 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:padding="10dp"
-            android:contentDescription="@string/album_artwork_description"/>
+            android:contentDescription="@string/album_artwork_description" />
+
         <TextView
             android:id="@+id/display_album_name"
             android:layout_width="match_parent"
@@ -31,7 +32,7 @@
             android:layout_height="wrap_content"
             android:gravity="center_horizontal"
             android:padding="10dp"
-            android:textSize="18sp"/>
+            android:textSize="18sp" />
 
         <TextView
             android:id="@+id/display_album_genres"
@@ -45,7 +46,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_horizontal"
-            android:padding="10dp"/>
+            android:padding="10dp" />
 
     </LinearLayout>
 </ScrollView>

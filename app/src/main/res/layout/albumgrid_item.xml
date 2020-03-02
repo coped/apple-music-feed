@@ -3,15 +3,18 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="10dp" >
+    android:padding="20dp" >
 
     <ImageView
         android:id="@+id/grid_album_artwork"
-        android:onClick="viewAlbum"
         style="@style/album_grid_image" />
 
     <TextView
         android:id="@+id/grid_album_name"
-        style="@style/album_grid_title" />
+        style="@style/album_grid_name" />
+
+    <TextView
+        android:id="@+id/grid_artist_name"
+        style="@style/album_grid_artist_name" />
 
 </LinearLayout>

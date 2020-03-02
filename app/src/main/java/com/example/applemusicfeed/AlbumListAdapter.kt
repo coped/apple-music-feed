@@ -19,9 +19,14 @@ class AlbumListAdapter(context: Context, albumList: MutableList<Map<String, Stri
     inner class AlbumViewHolder(itemView: View, adapter: AlbumListAdapter) :
                                             RecyclerView.ViewHolder(itemView) {
 
-        val albumTextView: TextView = itemView.findViewById(R.id.grid_album_name)
+        val albumNameView: TextView = itemView.findViewById(R.id.grid_album_name)
+        val albumArtistView: TextView = itemView.findViewById(R.id.grid_artist_name)
         val albumImageView: ImageView = itemView.findViewById(R.id.grid_album_artwork)
         val mAdapter: AlbumListAdapter = adapter
+    }
+
+    private fun shortenedName(name: String): String {
+        return if (name.length > 30) name.substring(0 until 30) + "..." else name
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AlbumViewHolder {
@@ -35,7 +40,10 @@ class AlbumListAdapter(context: Context, albumList: MutableList<Map<String, Stri
 
     override fun onBindViewHolder(holder: AlbumViewHolder, position: Int) {
         val mCurrent: Map<String, String> = mAlbumList[position]
-        holder.albumTextView.text = mCurrent["name"]
+
+        holder.albumNameView.text = shortenedName(mCurrent.getValue("name"))
+        holder.albumArtistView.text = shortenedName(mCurrent.getValue("artistName"))
+
         Picasso
             .get()
             .load(mCurrent["artworkUrl"])
