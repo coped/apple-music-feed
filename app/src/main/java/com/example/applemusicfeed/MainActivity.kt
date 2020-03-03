@@ -13,9 +13,10 @@ import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_main.*
 import okhttp3.*
 import org.json.JSONObject
+import java.net.URL
 
 class MainActivity : AppCompatActivity() {
-    private var mAlbumList: MutableList<Map<String, String>> = mutableListOf()
+    private lateinit var mAlbumList: List<Map<String, String>>
 
     private fun topAlbumsUrl(explicit: Boolean): String {
         val explicitness: String = if (explicit) "explicit" else "non-explicit"
@@ -55,7 +56,7 @@ class MainActivity : AppCompatActivity() {
         return list
     }
 
-    private fun sendRequest(url: String): String {
+    private fun sendRequest(url: URL): String {
         val client = OkHttpClient()
         val request: Request = Request.Builder()
             .url(url)
@@ -78,7 +79,8 @@ class MainActivity : AppCompatActivity() {
         override fun doInBackground(vararg urls: String): String? {
             // Catch exceptions when fetching and parsing album data
             return try {
-                mAlbumList = parseAlbumsFromResponse(sendRequest(urls[0]))
+                val url = URL(urls[0])
+                mAlbumList = parseAlbumsFromResponse(sendRequest(url))
                 "success"
             } catch(e: Throwable) {
                 Log.d("doInBackground_thrown", e.toString())

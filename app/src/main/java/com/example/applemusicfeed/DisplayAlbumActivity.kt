@@ -2,6 +2,7 @@ package com.example.applemusicfeed
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.MenuItem
 import android.widget.ImageView
 import android.widget.TextView
 import com.squareup.picasso.Picasso
@@ -10,6 +11,7 @@ class DisplayAlbumActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_display_album)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         val album: Map<String, String> = mapOf(
             "artworkUrl"  to intent.getStringExtra("artworkUrl"),
@@ -40,5 +42,17 @@ class DisplayAlbumActivity : AppCompatActivity() {
 
         val copyright = findViewById<TextView>(R.id.display_album_copyright)
         copyright.text = album["copyright"]
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            android.R.id.home -> {
+                finish()
+                true
+            }
+            else -> {
+                super.onOptionsItemSelected(item)
+            }
+        }
     }
 }

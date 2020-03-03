@@ -10,10 +10,10 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.squareup.picasso.Picasso
 
-class AlbumListAdapter(context: Context, albumList: MutableList<Map<String, String>>) :
+class AlbumListAdapter(context: Context, albumList: List<Map<String, String>>) :
                                 RecyclerView.Adapter<AlbumListAdapter.AlbumViewHolder>() {
 
-    private val mAlbumList: MutableList<Map<String, String>> = albumList
+    private val mAlbumList: List<Map<String, String>> = albumList
     private val mInflater: LayoutInflater = LayoutInflater.from(context)
 
     inner class AlbumViewHolder(itemView: View, adapter: AlbumListAdapter) :
