@@ -16,15 +16,15 @@ import org.json.JSONObject
 import java.net.URL
 
 class MainActivity : AppCompatActivity() {
-    private lateinit var mAlbumList: List<Map<String, String>>
+    private lateinit var mAlbumList: List<Album>
 
-    private fun topAlbumsUrl(explicit: Boolean): String {
+    private fun topAlbumsUrl(explicit: Boolean = false, n: Int = 25): String {
         val explicitness: String = if (explicit) "explicit" else "non-explicit"
-        return "https://rss.itunes.apple.com/api/v1/us/apple-music/top-albums/all/25/$explicitness.json"
+        return "https://rss.itunes.apple.com/api/v1/us/apple-music/top-albums/all/$n/$explicitness.json"
     }
 
-    private fun parseAlbumsFromResponse(result: String): MutableList<Map<String, String>> {
-        var list: MutableList<Map<String, String>> = mutableListOf()
+    private fun parseAlbumsFromResponse(result: String): MutableList<Album> {
+        var list: MutableList<Album> = mutableListOf()
 
         val jsonAlbums = JSONObject(result)
             .getJSONObject("feed")
@@ -42,16 +42,16 @@ class MainActivity : AppCompatActivity() {
                 )
             }
 
-            val albumInfo: Map<String, String> = mapOf(
-                "artistName"  to a.getString("artistName"),
-                "id"          to a.getString("id"),
-                "releaseDate" to a.getString("releaseDate"),
-                "name"        to a.getString("name"),
-                "copyright"   to a.getString("copyright"),
-                "artworkUrl"  to a.getString("artworkUrl100"),
-                "genres"      to genreList.joinToString(", ")
+            list.add(Album(
+                name = a.getString("name"),
+                id = a.getString("id"),
+                releaseDate = a.getString("releaseDate"),
+                artistName = a.getString("artistName"),
+                copyright = a.getString("copyright"),
+                artworkUrl = a.getString("artworkUrl100"),
+                genres = genreList
+                )
             )
-            list.add(albumInfo)
         }
         return list
     }
@@ -107,7 +107,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar)
-        GetAlbums().execute(topAlbumsUrl(explicit = false))
+        GetAlbums().execute(topAlbumsUrl())
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {

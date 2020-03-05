@@ -10,10 +10,10 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.squareup.picasso.Picasso
 
-class AlbumListAdapter(context: Context, albumList: List<Map<String, String>>) :
+class AlbumListAdapter(context: Context, albumList: List<Album>) :
                                 RecyclerView.Adapter<AlbumListAdapter.AlbumViewHolder>() {
 
-    private val mAlbumList: List<Map<String, String>> = albumList
+    private val mAlbumList: List<Album> = albumList
     private val mInflater: LayoutInflater = LayoutInflater.from(context)
 
     inner class AlbumViewHolder(itemView: View, adapter: AlbumListAdapter) :
@@ -39,14 +39,14 @@ class AlbumListAdapter(context: Context, albumList: List<Map<String, String>>) :
     }
 
     override fun onBindViewHolder(holder: AlbumViewHolder, position: Int) {
-        val mCurrent: Map<String, String> = mAlbumList[position]
+        val mCurrent: Album = mAlbumList[position]
 
-        holder.albumNameView.text = shortenedName(mCurrent.getValue("name"))
-        holder.albumArtistView.text = shortenedName(mCurrent.getValue("artistName"))
+        holder.albumNameView.text = shortenedName(mCurrent.name)
+        holder.albumArtistView.text = shortenedName(mCurrent.artistName)
 
         Picasso
             .get()
-            .load(mCurrent["artworkUrl"])
+            .load(mCurrent.artworkUrl)
             .error(R.drawable.ic_album_artwork_error_foreground)
             .resize(500, 500)
             .into(holder.albumImageView)
@@ -55,12 +55,7 @@ class AlbumListAdapter(context: Context, albumList: List<Map<String, String>>) :
         holder.albumImageView.setOnClickListener {
             val context = holder.albumImageView.context
             val intent = Intent(context, DisplayAlbumActivity::class.java).apply {
-                putExtra("artistName", mCurrent["artistName"])
-                putExtra("name", mCurrent["name"])
-                putExtra("artworkUrl", mCurrent["artworkUrl"])
-                putExtra("genres", mCurrent["genres"])
-                putExtra("releaseDate", mCurrent["releaseDate"])
-                putExtra("copyright", mCurrent["copyright"])
+                putExtra("album", mCurrent)
             }
             context.startActivity(intent)
         }
