@@ -9,6 +9,7 @@ data class Album(
     val copyright: String,
     val genres: List<String>,
     val id: String,
-    val releaseDate: String) : Serializable {
+    val releaseDate: String
+) : Serializable {
 
 }

@@ -34,22 +34,24 @@ class MainActivity : AppCompatActivity() {
             val a = jsonAlbums.getJSONObject(i)
 
             val genreList: MutableList<String> = mutableListOf()
-            for (i in (0 until a.getJSONArray("genres").length())) {
-                genreList.add(i, a
-                    .getJSONArray("genres")
-                    .getJSONObject(i)
-                    .getString("name")
+            for (j in (0 until a.getJSONArray("genres").length())) {
+                genreList.add(
+                    j, a
+                        .getJSONArray("genres")
+                        .getJSONObject(j)
+                        .getString("name")
                 )
             }
 
-            list.add(Album(
-                name = a.getString("name"),
-                id = a.getString("id"),
-                releaseDate = a.getString("releaseDate"),
-                artistName = a.getString("artistName"),
-                copyright = a.getString("copyright"),
-                artworkUrl = a.getString("artworkUrl100"),
-                genres = genreList
+            list.add(
+                Album(
+                    name = a.getString("name"),
+                    id = a.getString("id"),
+                    releaseDate = a.getString("releaseDate"),
+                    artistName = a.getString("artistName"),
+                    copyright = a.getString("copyright"),
+                    artworkUrl = a.getString("artworkUrl100"),
+                    genres = genreList
                 )
             )
         }
@@ -82,7 +84,7 @@ class MainActivity : AppCompatActivity() {
                 val url = URL(urls[0])
                 mAlbumList = parseAlbumsFromResponse(sendRequest(url))
                 "success"
-            } catch(e: Throwable) {
+            } catch (e: Throwable) {
                 Log.d("doInBackground_thrown", e.toString())
                 null
             }

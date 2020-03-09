@@ -21,6 +21,7 @@ class DisplayAlbumActivity : AppCompatActivity() {
                 .load(album.artworkUrl)
                 .error(R.drawable.ic_album_artwork_error_foreground)
                 .resize(1000, 1000)
+                .transform(RoundedCornersTransform())
                 .into(this)
         }
 

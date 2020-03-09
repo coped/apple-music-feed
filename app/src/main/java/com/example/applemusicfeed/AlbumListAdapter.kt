@@ -11,13 +11,13 @@ import androidx.recyclerview.widget.RecyclerView
 import com.squareup.picasso.Picasso
 
 class AlbumListAdapter(context: Context, albumList: List<Album>) :
-                                RecyclerView.Adapter<AlbumListAdapter.AlbumViewHolder>() {
+    RecyclerView.Adapter<AlbumListAdapter.AlbumViewHolder>() {
 
     private val mAlbumList: List<Album> = albumList
     private val mInflater: LayoutInflater = LayoutInflater.from(context)
 
     inner class AlbumViewHolder(itemView: View, adapter: AlbumListAdapter) :
-                                            RecyclerView.ViewHolder(itemView) {
+        RecyclerView.ViewHolder(itemView) {
 
         val albumNameView: TextView = itemView.findViewById(R.id.grid_album_name)
         val albumArtistView: TextView = itemView.findViewById(R.id.grid_artist_name)
@@ -49,6 +49,7 @@ class AlbumListAdapter(context: Context, albumList: List<Album>) :
             .load(mCurrent.artworkUrl)
             .error(R.drawable.ic_album_artwork_error_foreground)
             .resize(500, 500)
+            .transform(RoundedCornersTransform())
             .into(holder.albumImageView)
 
 
